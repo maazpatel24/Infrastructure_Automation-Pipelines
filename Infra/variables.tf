@@ -8,11 +8,6 @@ variable "username" {
   default = "adminuser-maaz"
 }
 
-# variable "resource_group_location" {
-#   type    = string
-#   default = "Southeast Asia"
-# }
-
 variable "virtual_network_name" {
   type    = string
   default = "example-vm-vnet"
