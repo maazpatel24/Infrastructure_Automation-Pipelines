@@ -41,8 +41,6 @@ stages:
               script: 'terraform validate'
               workingDirectory: '$(infraDirectory)'
 
-
-
   - stage: tfdeploy
     # condition: succeeded('tfvalidate') # This stage only runs when previous stage completes successfully.
     # dependsOn: tfvalidate # It make sure it runs after tfvalidate
@@ -78,7 +76,7 @@ stages:
               script: 'terraform apply -auto-approve'
               workingDirectory: '$(infraDirectory)'
           - task: PublishPipelineArtifact@1
-            displayName: publish invntoryfile
+            displayName: publish inventoryfile
             inputs:
               targetPath: '$(playbookDirectory)/inventory.ini'
               artifact: 'Inventory-File'
@@ -90,11 +88,12 @@ stages:
       - job: Download_Inventory_file_from_pipeline
         steps:
           - task: DownloadPipelineArtifact@2
+            displayName: download inventoryfile
             inputs:
               buildType: 'current'
               artifactName: 'Inventory-File'
               targetPath: '$(playbookDirectory)'
-          - task: Bash@3                              # Ignore this task
+          - task: Bash@3                              # Ignore this task. Checks if inventory file exists.
             displayName: Ansible Directory Check
             inputs:
               targetType: 'inline'
@@ -104,35 +103,24 @@ stages:
                 cat inventory.ini
                 echo --------------------------------
               workingDirectory: '$(playbookDirectory)'
-              
-      - job: playbookRun
-        steps: 
-          - task: Bash@3                              # Ignore this task
-            displayName: Ansible Directory Check
-            inputs:
-              targetType: 'inline'
-              script: |
-                ls -ahl $(Build.Repository.Localpath)
-                echo --------------------------------
-                cat inventory.ini
-                echo --------------------------------
-              workingDirectory: '$(playbookDirectory)'
-          # - task: Bash@3
-          #   displayName: change Permission of .pem
-          #   inputs:
-          #     targetType: 'inline'
-          #     script: 'chmod 400 maaz_id_rsa.pem'
-          #     workingDirectory: '$(Build.Repository.Localpath)'
-          
-          # - task: Bash@3
-          #   displayName: ansible-playbook
-          #   inputs:
-          #     targetType: 'inline'
-          #     script: |
-          #       export ANSIBLE_HOST_KEY_CHECKING=False
-          #       ansible-playbook -i inventory.ini playbook.yml
-          #     workingDirectory: '$(playbookDirectory)'
 
+          - task: Bash@3
+            displayName: change Permission of .pem
+            inputs:
+              targetType: 'inline'
+              script: 'chmod 400 maaz_id_rsa.pem'
+              workingDirectory: '$(Build.Repository.Localpath)'
+          
+          - task: Bash@3
+            displayName: ansible-playbook
+            inputs:
+              targetType: 'inline'
+              script: |
+                export ANSIBLE_HOST_KEY_CHECKING=False
+                ansible-playbook -i inventory.ini playbook.yml
+              workingDirectory: '$(playbookDirectory)'
+
+# Ignore this stage
   - stage: checking
     condition: failed('AnsiblePlaybook') # This stage only runs when previous stage completes successfully.
     dependsOn: AnsiblePlaybook # It make sure it runs after AnsiblePlaybook
@@ -149,18 +137,3 @@ stages:
                 cat inventory.ini
                 echo --------------------------------
               workingDirectory: '$(playbookDirectory)'
-
-
-# jobs:
-# - job: "Terraform_init"
-#   steps:
-#     - task: CmdLine@2
-#       displayName: 'environment listing'
-#       inputs:
-#         script: |
-#           pwd
-#           echo "----------------------------"
-#           ls '$(Build.Repository.Localpath)'
-#           echo "----------------------------"
-#           env | sort
-#         workingDirectory: '$(System.ArtifactsDirectory)'
