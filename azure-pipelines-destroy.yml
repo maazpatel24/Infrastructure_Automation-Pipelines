@@ -1,0 +1,46 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  configDirectory: $(Build.Repository.Localpath)/Infra
+
+stages:  
+  - stage: tfdestroy
+    jobs:
+      - job: destroy
+        steps:
+          - task: TerraformInstaller@1
+            displayName: tfinstall
+            inputs:
+              terraformVersion: 'latest'
+          - task: Bash@3
+            displayName: Azure Login
+            inputs:
+              targetType: 'inline'
+              script: 'az login'
+              workingDirectory: '$(configDirectory)'
+          - task: Bash@3
+            displayName: init
+            inputs:
+              targetType: 'inline'
+              script: 'terraform init'
+              workingDirectory: '$(configDirectory)'
+          - task: Bash@3
+            displayName: plan
+            inputs:
+              targetType: 'inline'
+              script: 'terraform plan'
+              workingDirectory: '$(configDirectory)'
+          - task: Bash@3
+            displayName: destroy
+            inputs:
+              targetType: 'inline'
+              script: 'terraform destroy -auto-approve'
+              workingDirectory: '$(configDirectory)'

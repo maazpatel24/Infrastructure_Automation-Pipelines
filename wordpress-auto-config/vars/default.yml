@@ -1,0 +1,13 @@
+#PHP Settings
+php_modules: [ 'php-curl', 'php-gd', 'php-mbstring', 'php-xml', 'php-xmlrpc', 'php-soap', 'php-intl', 'php-zip' ]
+
+#MySQL Settings
+mysql_root_password: "mysql_root_password"
+mysql_db: "wordpress"
+mysql_user: "maaz"
+mysql_password: "password"
+
+#HTTP Settings
+http_host: "mysite.com"
+http_conf: "mysite.conf"
+http_port: "80"

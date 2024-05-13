@@ -1,0 +1,5 @@
+---
+- name: Install PHP Extensions
+  apt: name={{ item }} update_cache=yes state=latest state=present
+  loop: "{{ php_modules }}"
+  tags: [ php ]
