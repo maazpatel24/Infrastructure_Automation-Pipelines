@@ -27,7 +27,7 @@ variable "network_interface_name" {
   default = "maaz_terraform-nic"
 }
 
-variable tenant_id{}
-variable "subscription_id" {}
-variable "client_id"{}
-variable "client_secret"{}
+# variable tenant_id{}
+# variable "subscription_id" {}
+# variable "client_id"{}
+# variable "client_secret"{}
