@@ -4,9 +4,9 @@ output "rg_name" {
 }
 
 output "public_ip_address" {
-  value = azurerm_linux_virtual_machine.example_linux_vm.public_ip_address
+  value = azurerm_linux_virtual_machine.testingEvn_linux_vm.public_ip_address
 }
 
-output "id" {
-  value = data.azurerm_ssh_public_key.maaz_pubic_key.id
-}
+# output "id" {
+  # value = data.azurerm_ssh_public_key.maaz_pubic_key.id
+# }

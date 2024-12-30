@@ -3,10 +3,10 @@ data "azurerm_resource_group" "maaz_rg" {
   name = var.resource_group_name
 }
 
-data "azurerm_ssh_public_key" "maaz_pubic_key" {
-  name                = "maaz_id_rsa"
-  resource_group_name = var.resource_group_name
-}
+# data "azurerm_ssh_public_key" "maaz_pubic_key" {
+#   name                = "maaz_id_rsa"
+#   resource_group_name = var.resource_group_name
+# }
 
 # Creating Virtual Network
 resource "azurerm_virtual_network" "testing_vnet" {
@@ -76,10 +76,10 @@ resource "azurerm_linux_virtual_machine" "testingEvn_linux_vm" {
     azurerm_network_interface.testingEvn_nic.id,
   ]
 
-  admin_ssh_key {
-    username = var.username
-    public_key = data.azurerm_ssh_public_key.maaz_pubic_key.public_key
-  }
+  # admin_ssh_key {
+  #   username = var.username
+  #   public_key = data.azurerm_ssh_public_key.maaz_pubic_key.public_key
+  # }
 
   os_disk {
     caching              = "ReadWrite"
