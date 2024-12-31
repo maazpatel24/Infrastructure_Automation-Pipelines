@@ -8,8 +8,8 @@ terraform {
   backend "azurerm" {
     resource_group_name  = "sa1_test_eic_MaazPatel"
     storage_account_name = "terraformremotestate24"
-    container_name       = "azure-devops-pipeline"
-    key                  = "terraform.tfstate"
+    container_name       = "tfstate"
+    key                  = "dev.terrakube.tfstate"
   }
 }
 
