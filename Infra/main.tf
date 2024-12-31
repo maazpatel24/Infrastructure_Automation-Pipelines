@@ -3,10 +3,10 @@ data "azurerm_resource_group" "maaz_rg" {
   name = var.resource_group_name
 }
 
-# data "azurerm_ssh_public_key" "maaz_pubic_key" {
-#   name                = "maaz_id_rsa"
-#   resource_group_name = var.resource_group_name
-# }
+data "azurerm_ssh_public_key" "maaz_pubic_key" {
+  name                = "terrakube"
+  resource_group_name = var.resource_group_name
+}
 
 # Creating Virtual Network
 resource "azurerm_virtual_network" "testing_vnet" {
@@ -71,15 +71,15 @@ resource "azurerm_linux_virtual_machine" "testingEvn_linux_vm" {
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
   location            = data.azurerm_resource_group.maaz_rg.location
   size                = "Standard_D2s_v3"
-  admin_username      = var.username
+  admin_username      = var.vm_username
   network_interface_ids = [
     azurerm_network_interface.testingEvn_nic.id,
   ]
 
-  # admin_ssh_key {
-  #   username = var.username
-  #   public_key = data.azurerm_ssh_public_key.maaz_pubic_key.public_key
-  # }
+  admin_ssh_key {
+    username = var.vm_username
+    public_key = data.azurerm_ssh_public_key.maaz_pubic_key.public_key
+  }
 
   os_disk {
     caching              = "ReadWrite"
@@ -107,7 +107,7 @@ resource "azurerm_linux_virtual_machine" "testingEvn_linux_vm" {
 resource "local_file" "inventory" {
   content  = <<-EOT
   [webserver]
-  ${var.username}@${azurerm_linux_virtual_machine.testingEvn_linux_vm.public_ip_address} ansible_ssh_private_key_file=../maaz_id_rsa.pem
+  ${var.vm_username}@${azurerm_linux_virtual_machine.testingEvn_linux_vm.public_ip_address} ansible_ssh_private_key_file=../maaz_id_rsa.pem
   EOT
   filename = abspath("../wordpress-auto-config/inventory.ini")
 }
