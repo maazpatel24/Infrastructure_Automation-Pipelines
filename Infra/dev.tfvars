@@ -1,0 +1,8 @@
+env = "dev"
+prefix = "terrakube"
+resource_group_name = "sa1_test_eic_MaazPatel"
+vm_username = "adminuser-maaz"
+virtual_network_name = "example-vm-vnet"
+subnet_name = "example-vm-subnet"
+public_ip_name = "example-public-ip"
+network_interface_name = "maaz_terraform-nic"
