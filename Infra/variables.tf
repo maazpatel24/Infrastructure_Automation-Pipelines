@@ -19,9 +19,11 @@ variable "virtual_network_name" {
 
 variable "subnet_name" {
   type    = string
+  default = "example-vm-subnet"
 }
 variable "public_ip_name" {
   type = string
+  default = "example-public-ip"
 }
 
 variable "network_interface_name" {
