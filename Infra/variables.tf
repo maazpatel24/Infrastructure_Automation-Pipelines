@@ -9,7 +9,7 @@ variable "resource_group_name" {
 
 variable "vm_username" {
   type = string
-  # default = "adminuser-maaz"
+  default = "adminuser-maaz"
 }
 
 variable "virtual_network_name" {
