@@ -18,7 +18,7 @@ resource "azurerm_virtual_network" "testing_vnet" {
 
 # Creating Subnet
 resource "azurerm_subnet" "testing_subnet" {
-  name                 = var.subnet_name
+  name                 = "${var.env}-${var.prefix}-vm-subnet"
   resource_group_name  = data.azurerm_resource_group.maaz_rg.name
   virtual_network_name = azurerm_virtual_network.testing_vnet.name
   address_prefixes     = ["10.0.2.0/24"]
@@ -26,7 +26,7 @@ resource "azurerm_subnet" "testing_subnet" {
 
 # Create public IPs
 resource "azurerm_public_ip" "testingEvn_public_ip" {
-  name                = var.public_ip_name
+  name                = "${var.env}-${var.prefix}-public-ip"
   location            = data.azurerm_resource_group.maaz_rg.location
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
   allocation_method   = "Dynamic"
