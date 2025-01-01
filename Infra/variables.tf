@@ -1,6 +1,6 @@
 variable "env" {}
 variable "prefix" {
-  default = "terrakube"
+  # default = "terrakube"
 }
 variable "resource_group_name" {
   type    = string
@@ -14,16 +14,16 @@ variable "vm_username" {
 
 variable "virtual_network_name" {
   type    = string
-  default = "example-vm-vnet"
+  # default = "example-vm-vnet"
 }
 
 variable "subnet_name" {
   type    = string
-  default = "example-vm-subnet"
+  # default = "example-vm-subnet"
 }
 variable "public_ip_name" {
   type = string
-  default = "example-public-ip"
+  # default = "example-public-ip"
 }
 
 variable "network_interface_name" {
