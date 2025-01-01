@@ -1,3 +1,7 @@
+variable "env" {}
+variable "prefix" {
+  default = "terrakube"
+}
 variable "resource_group_name" {
   type    = string
   # default = "sa1_test_eic_MaazPatel"

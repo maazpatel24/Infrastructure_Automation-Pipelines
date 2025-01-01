@@ -34,7 +34,7 @@ resource "azurerm_public_ip" "testingEvn_public_ip" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "testingEvn_nsg" {
-  name                = "myTestingEnvNetworkSecurityGroup"
+  name                = "${var.env}${var.prefix}NetworkSecurityGroup"
   location            = data.azurerm_resource_group.maaz_rg.location
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
 
@@ -67,7 +67,7 @@ resource "azurerm_network_interface" "testingEvn_nic" {
 
 # Create Virtual Machine
 resource "azurerm_linux_virtual_machine" "testingEvn_linux_vm" {
-  name                = "testingEvnLinux-vm"
+  name                = "${var.env}-${var.prefix}-Linux-vm"
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
   location            = data.azurerm_resource_group.maaz_rg.location
   size                = "Standard_D2s_v3"
