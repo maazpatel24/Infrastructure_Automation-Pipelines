@@ -8,24 +8,36 @@ data "azurerm_ssh_public_key" "maaz_pubic_key" {
   resource_group_name = var.resource_group_name
 }
 
+locals {
+  tags = {
+    Resource_Owner    = "Maaz Patel",
+    Delivery_Manager  = "Shahid Raza",
+    Sub_Business_Unit = "PES-IA",
+    Business_Unit     = "einfochips",
+    Project_Name      = "Training and Learning",
+    Environment       = var.env,
+    Create_Date       = "02 Jan 2025"
+  }
+}
+
 # Creating Virtual Network
-resource "azurerm_virtual_network" "testing_vnet" {
-  name                = var.virtual_network_name
-  address_space       = ["10.0.0.0/16"]
+resource "azurerm_virtual_network" "terrakube_vnet" {
+  name                = "${var.env}-${var.prefix}-vnet"
+  address_space       = var.subnet_range
   location            = data.azurerm_resource_group.maaz_rg.location
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
 }
 
 # Creating Subnet
-resource "azurerm_subnet" "testing_subnet" {
+resource "azurerm_subnet" "terrakube_subnet" {
   name                 = "${var.env}-${var.prefix}-vm-subnet"
   resource_group_name  = data.azurerm_resource_group.maaz_rg.name
-  virtual_network_name = azurerm_virtual_network.testing_vnet.name
-  address_prefixes     = ["10.0.2.0/24"]
+  virtual_network_name = azurerm_virtual_network.terrakube_vnet.name
+  address_prefixes     = var.subnet_range
 }
 
 # Create public IPs
-resource "azurerm_public_ip" "testingEvn_public_ip" {
+resource "azurerm_public_ip" "terrakube_public_ip" {
   name                = "${var.env}-${var.prefix}-public-ip"
   location            = data.azurerm_resource_group.maaz_rg.location
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
@@ -33,7 +45,7 @@ resource "azurerm_public_ip" "testingEvn_public_ip" {
 }
 
 # Create Network Security Group and rule
-resource "azurerm_network_security_group" "testingEvn_nsg" {
+resource "azurerm_network_security_group" "terrakube_nsg" {
   name                = "${var.env}${var.prefix}NetworkSecurityGroup"
   location            = data.azurerm_resource_group.maaz_rg.location
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
@@ -52,32 +64,32 @@ resource "azurerm_network_security_group" "testingEvn_nsg" {
 }
 
 # Creating Network interface
-resource "azurerm_network_interface" "testingEvn_nic" {
+resource "azurerm_network_interface" "terrakube_nic" {
   name                = var.network_interface_name
   location            = data.azurerm_resource_group.maaz_rg.location
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
 
   ip_configuration {
     name                          = "my_nic_internal"
-    subnet_id                     = azurerm_subnet.testing_subnet.id
+    subnet_id                     = azurerm_subnet.terrakube_subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.testingEvn_public_ip.id
+    public_ip_address_id          = azurerm_public_ip.terrakube_public_ip.id
   }
 }
 
 # Create Virtual Machine
-resource "azurerm_linux_virtual_machine" "testingEvn_linux_vm" {
+resource "azurerm_linux_virtual_machine" "terrakube_linux_vm" {
   name                = "${var.env}-${var.prefix}-Linux-vm"
   resource_group_name = data.azurerm_resource_group.maaz_rg.name
   location            = data.azurerm_resource_group.maaz_rg.location
   size                = "Standard_D2s_v3"
   admin_username      = var.vm_username
   network_interface_ids = [
-    azurerm_network_interface.testingEvn_nic.id,
+    azurerm_network_interface.terrakube_nic.id,
   ]
 
   admin_ssh_key {
-    username = var.vm_username
+    username   = var.vm_username
     public_key = data.azurerm_ssh_public_key.maaz_pubic_key.public_key
   }
 
@@ -93,21 +105,14 @@ resource "azurerm_linux_virtual_machine" "testingEvn_linux_vm" {
     version   = "latest"
   }
 
-  tags = {
-    Resource_Owner : "Maaz"
-    Delivery_Manager : "Shriram Deshpande"
-    Sub_Business_Unit : "PES-IA"
-    Business_Unit : "einfochips"
-    Project_Name : "Training and learning"
-    Create_Date : "13 May 2024"
-  }
+  tags = local.tags
 }
 
 # Create Local Inventory File
 resource "local_file" "inventory" {
   content  = <<-EOT
   [webserver]
-  ${var.vm_username}@${azurerm_linux_virtual_machine.testingEvn_linux_vm.public_ip_address} ansible_ssh_private_key_file=../maaz_id_rsa.pem
+  ${var.vm_username}@${azurerm_linux_virtual_machine.terrakube_linux_vm.public_ip_address} ansible_ssh_private_key_file=../maaz_id_rsa.pem
   EOT
   filename = abspath("../wordpress-auto-config/inventory.ini")
 }
