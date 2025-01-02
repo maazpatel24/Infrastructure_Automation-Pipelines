@@ -104,7 +104,6 @@ resource "azurerm_linux_virtual_machine" "terrakube_linux_vm" {
     sku       = "22_04-lts"
     version   = "latest"
   }
-
   tags = local.tags
 }
 
