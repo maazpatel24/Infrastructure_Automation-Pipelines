@@ -95,10 +95,6 @@ resource "azurerm_linux_virtual_machine" "testingEvn_linux_vm" {
 
   tags = {
     Resource_Owner : "Maaz"
-    Delivery_Manager : "Shriram Deshpande"
-    Sub_Business_Unit : "PES-IA"
-    Business_Unit : "einfochips"
-    Project_Name : "Training and learning"
     Create_Date : "13 May 2024"
   }
 }
